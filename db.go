@@ -92,7 +92,12 @@ func (c *DBcon) GetResultRows(sqlquery string) (*sql.Rows, error) {
 	return rows, nil
 
 }
-
+//Close ... Close dbConntions
+func (c *DBcon) Close(){
+	c.DB.Close()
+	c.Ctx.Done()
+	c.Qstmt.Close()
+}
 //CreateDBCon ... Create Project DB Connection
 func CreateDBCon(dbconnectionstring *string) (*DBcon, error) {
 	var cs string
