@@ -15,9 +15,10 @@ import (
 
 //DBcon ... Project DB type
 type DBcon struct {
-	DB    *sql.DB
-	Ctx   context.Context
-	Qstmt *sql.Stmt
+	DB     *sql.DB
+	Ctx    context.Context
+	Qstmt  *sql.Stmt
+	cancel context.CancelFunc
 }
 
 //ExecuteResult ...
@@ -92,12 +93,15 @@ func (c *DBcon) GetResultRows(sqlquery string) (*sql.Rows, error) {
 	return rows, nil
 
 }
+
 //Close ... Close dbConntions
-func (c *DBcon) Close(){
-	c.DB.Close()
-	c.Ctx.Done()
+func (c *DBcon) Close() {
 	c.Qstmt.Close()
+	c.DB.Close()
+	c.cancel()
+
 }
+
 //CreateDBCon ... Create Project DB Connection
 func CreateDBCon(dbconnectionstring *string) (*DBcon, error) {
 	var cs string
@@ -129,6 +133,9 @@ func CreateDBCon(dbconnectionstring *string) (*DBcon, error) {
 		return nil, err
 
 	}
-	c := DBcon{DB: db, Ctx: context.TODO()}
+	c := DBcon{}
+	c.DB = db
+	c.Ctx, c.cancel = context.WithCancel(context.Background())
+	//c := DBcon{DB: db, Ctx: context.TODO()}
 	return &c, nil
 }
