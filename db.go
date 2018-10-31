@@ -129,6 +129,6 @@ func CreateDBCon(dbconnectionstring *string) (*DBcon, error) {
 		return nil, err
 
 	}
-	c := DBcon{DB: db, Ctx: context.Background()}
+	c := DBcon{DB: db, Ctx: context.TODO()}
 	return &c, nil
 }
